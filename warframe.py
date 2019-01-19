@@ -58,7 +58,7 @@ class Warframe():
 
 		self.arcanes = ()
 	
-	def applyModifier(self, modifier_name, value):
+	def apply_modifier(self, modifier_name, value):
 		"""
 		applies the specified modifier with the value. `modifier_name` MUST be
 		listed in Warframe.modifiers. `value` is the float value of the
@@ -71,20 +71,26 @@ class Warframe():
 def _test():
 	warframe = Warframe()
 	try:
-		warframe.applyModifier("new", 1.5)
+		warframe.apply_modifier("new", 1.5)
 	except KeyError as e:
-		pass
+		_warframe_logger.debug("apply_modifier correctly checks for non-existant keys.")
 
 def _init_logger():
 	global _warframe_logger
-	_warframe_logger = logging.getLogger(__name__)
+	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt=":%(name)s:%(levelname)s:%(message)s")
+	handler = logging.StreamHandler()
+	handler.setFormatter(formatter)
+	_warframe_logger = logging.getLogger("libwarframe:"+__name__)
+	_warframe_logger.addHandler(handler)
 	level = os.getenv("LOGGER_LEVEL")
 	# should be DEBUG, INFO, WARN, ERROR
-	if level == "":
+	if level == "" or level == None:
 		level = "WARN"
 	_warframe_logger.setLevel(level)
+	_warframe_logger.debug("Logger set to {}".format(level))
 
 if __name__ == "__main__":
 	_init_logger()
-	test()
+	_test()
+	logging.shutdown()
 
