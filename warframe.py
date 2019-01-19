@@ -21,8 +21,7 @@ class Warframe():
 	"strength",
 	"range",
 	"duration",
-	"efficiency",
-	"energy"]
+	"efficiency"]
 
 	def __init__(self, health_modifier=1, armor_modifier=1, shield_modifier=1):
 		"""
@@ -54,6 +53,10 @@ class Warframe():
 			raise AttributeError("Attribute must be one of {}".format(Warframe.inherent_attributes))
 		return self.base_attributes[att] * self.modifiers[att]
 	
+	def __str__(self):
+		"""returns a string representation of this frame"""
+		return "\n".join("{}: {}".format(i, self.__getattr__(i)) for i in Warframe.inherent_attributes)
+	
 	def apply_modifier(self, modifier_name, value):
 		"""
 		applies the specified modifier with the value. `modifier_name` MUST be
@@ -80,7 +83,7 @@ def _test():
 	_warframe_logger.debug("Energy request successful for attribute. {}".format(warframe.energy))
 	_warframe_logger.debug("Abilities: {}".format(warframe.abilities))
 
-def _init_logger(level):
+def init_warframe_logger(level="WARN"):
 	global _warframe_logger
 	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt=":%(name)s:%(levelname)s:%(message)s")
 	handler = logging.StreamHandler()
