@@ -23,7 +23,7 @@ class Warframe():
 	"duration",
 	"efficiency"]
 
-	def __init__(self, health_modifier=1, armor_modifier=1, shield_modifier=1):
+	def __init__(self, health_modifier=0, armor_modifier=0, shield_modifier=0):
 		"""
 		initializes the warframe
 		"""
@@ -40,7 +40,7 @@ class Warframe():
 		# value, i.e. 110% power is stored 1.1
 		for att in Warframe.inherent_attributes:
 			self.base_attributes[att] = 1
-			self.modifiers[att] = 1
+			self.modifiers[att] = 0
 		self.apply_modifier("health", health_modifier)
 		self.apply_modifier("armor", armor_modifier)
 		self.apply_modifier("shield", shield_modifier)
@@ -50,7 +50,11 @@ class Warframe():
 	def __getattr__(self, att):
 		"""returns a calculated attribute from a warframe"""
 		self._check_attribute(att)
-		return self.base_attributes[att] * self.modifiers[att]
+		return self.base_attributes[att] * (1 + self.modifiers[att])
+	
+	def __getitem__(self, att):
+		"""allow subscripting for access"""
+		return self.__getattr__(att)
 	
 	def __str__(self):
 		"""returns a string representation of this frame"""
@@ -59,7 +63,7 @@ class Warframe():
 	def _check_attribute(self, att):
 		"""raises an error if this attibute is not supported"""
 		if not att in self.base_attributes:
-			raise AttributeError("Attribute must be one of {}".format(self.base_attributes))
+			raise AttributeError("Attribute must be one of {}\tReceived: {}".format(self.base_attributes, att))
 
 	
 	def apply_modifier(self, modifier_name, value):
@@ -79,8 +83,8 @@ def _test():
 	try:
 		warframe.apply_modifier("new", 1.5)
 		_warframe_logger.error("Modifiers can be applied for non-existant attributes.")
-	except KeyError as e:
-		_warframe_logger.debug("apply_modifier correctly checks for non-existant keys.")
+	except AttributeError as e:
+		_warframe_logger.debug("apply_modifier correctly checks for non-existant attributes.")
 	try:
 		warframe.armor = 100
 		_warframe_logger.error("Properties incorrectly accessible.")
@@ -91,8 +95,11 @@ def _test():
 	except AttributeError as e:
 		_warframe_logger.error("Failed to access property using dot notation.")
 	_warframe_logger.debug("Abilities: {}".format(warframe.abilities))
+	for att in Warframe.inherent_attributes:
+		if warframe[att] != 1:
+			_warframe_logger.error("Unexpected modified attribute: {} \tval: {}\tExpected: {}".format(att, warframe[att], 1))
 
-def init_warframe_logger(level="WARN"):
+def _init_warframe_logger(level="WARN"):
 	global _warframe_logger
 	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s:%(name)s:%(levelname)s:%(message)s")
 	handler = logging.StreamHandler()
@@ -107,7 +114,7 @@ if __name__ == "__main__":
 	# should be DEBUG, INFO, WARN, ERROR
 	if level == "" or level == None:
 		level = "WARN"
-	_init_logger(level)
+	_init_warframe_logger(level)
 	_test()
 	logging.shutdown()
 
