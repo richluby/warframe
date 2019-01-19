@@ -89,7 +89,7 @@ def _test():
 
 def init_warframe_logger(level="WARN"):
 	global _warframe_logger
-	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt=":%(name)s:%(levelname)s:%(message)s")
+	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s:%(name)s:%(levelname)s:%(message)s")
 	handler = logging.StreamHandler()
 	handler.setFormatter(formatter)
 	_warframe_logger = logging.getLogger("libwarframe:"+__name__)
