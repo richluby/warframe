@@ -5,25 +5,41 @@ class Warframe():
 	stores stats specific to a warframe
 	"""
 
-	def __init__(self):
+	"""
+	defines base values for all warframes. should be overriden by individual frames
+	"""
+	base_armor = 100
+	base_health = 100
+	base_shield = 100
+	base_energy = 100
+	base_sprint = 1
+
+	def __init__(self, healthModifer=1, armorModifier=1, shieldModifier=1):
 		"""
 		initializes the warframe
 		"""
+		# list containing the warframe abilities. 1-4 correlate with the
+		# in-game abilities. Passive(s) are appended at the end of the list
 		self.abilities = ()
-		self.armor = 0
-		self.shield = 0
-		self.health = 0
 
-		# all powers are stored as floats representing the non-percentage based
+		# warframe stats are a 1:1 mapping of the values shown in game
+		self.armor  = base_armor
+		self.shield = base_shield
+		self.health = base_health
+		self.energy = base_energy
+
+		# all modifiers are stored as floats representing the non-percentage based
 		# value, i.e. 110% power is stored 1.1
-		self.strength = 1
-		self.efficiency = 1
-		self.duration = 1
-		self.range = 1
+		self.sprint_speed_modifier = 1
+		self.strength_modifier = 1
+		self.efficiency_modifier = 1
+		self.duration_modifier = 1
+		self.range_modifier = 1
 
-def calcChromaVexArmor(baseArmor=425, armorModValue=0, mulitplier=3.5, strengthMods=0):
-	"""
-	returns the calculated armor amount for activating vex armor
-	"""
-	return baseArmor * (1 + armorModValue + mulitplier * (1 + strengthMods))
-	
+		self.health_modifier
+		self.armor_modifier
+		self.shield_modifier
+		self.energy_modifier
+
+		self.arcanes = ()
+
