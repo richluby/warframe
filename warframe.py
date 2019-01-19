@@ -78,13 +78,18 @@ def _test():
 	warframe = Warframe()
 	try:
 		warframe.apply_modifier("new", 1.5)
+		_warframe_logger.error("Modifiers can be applied for non-existant attributes.")
 	except KeyError as e:
 		_warframe_logger.debug("apply_modifier correctly checks for non-existant keys.")
 	try:
 		warframe.armor = 100
+		_warframe_logger.error("Properties incorrectly accessible.")
 	except AttributeError as e:
 		_warframe_logger.debug("Property values correctly disabled.")
-	_warframe_logger.debug("Energy request successful for attribute. {}".format(warframe.energy))
+	try:
+		_warframe_logger.debug("Energy request successful for attribute- warframe.energy: {}".format(warframe.energy))
+	except AttributeError as e:
+		_warframe_logger.error("Failed to access property using dot notation.")
 	_warframe_logger.debug("Abilities: {}".format(warframe.abilities))
 
 def init_warframe_logger(level="WARN"):
