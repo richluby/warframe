@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+import logging
+import os
+
+_warframe_logger = None
+
 class Warframe():
 	"""
 	stores stats specific to a warframe
@@ -63,4 +68,23 @@ class Warframe():
 			raise KeyError("modifier_name must be one of {}".format(Warframe.modifiers))
 		self.modifiers[modifier_name] = value
 
+def _test():
+	warframe = Warframe()
+	try:
+		warframe.applyModifier("new", 1.5)
+	except KeyError as e:
+		pass
+
+def _init_logger():
+	global _warframe_logger
+	_warframe_logger = logging.getLogger(__name__)
+	level = os.getenv("LOGGER_LEVEL")
+	# should be DEBUG, INFO, WARN, ERROR
+	if level == "":
+		level = "WARN"
+	_warframe_logger.setLevel(level)
+
+if __name__ == "__main__":
+	_init_logger()
+	test()
 
