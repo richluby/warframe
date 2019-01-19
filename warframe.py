@@ -75,22 +75,22 @@ def _test():
 	except KeyError as e:
 		_warframe_logger.debug("apply_modifier correctly checks for non-existant keys.")
 
-def _init_logger():
+def _init_logger(level):
 	global _warframe_logger
 	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt=":%(name)s:%(levelname)s:%(message)s")
 	handler = logging.StreamHandler()
 	handler.setFormatter(formatter)
 	_warframe_logger = logging.getLogger("libwarframe:"+__name__)
 	_warframe_logger.addHandler(handler)
-	level = os.getenv("LOGGER_LEVEL")
-	# should be DEBUG, INFO, WARN, ERROR
-	if level == "" or level == None:
-		level = "WARN"
 	_warframe_logger.setLevel(level)
 	_warframe_logger.debug("Logger set to {}".format(level))
 
 if __name__ == "__main__":
-	_init_logger()
+	level = os.getenv("LOGGER_LEVEL")
+	# should be DEBUG, INFO, WARN, ERROR
+	if level == "" or level == None:
+		level = "WARN"
+	_init_logger(level)
 	_test()
 	logging.shutdown()
 
