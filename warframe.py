@@ -49,13 +49,18 @@ class Warframe():
 
 	def __getattr__(self, att):
 		"""returns a calculated attribute from a warframe"""
-		if not att in Warframe.inherent_attributes:
-			raise AttributeError("Attribute must be one of {}".format(Warframe.inherent_attributes))
+		self._check_attribute(att)
 		return self.base_attributes[att] * self.modifiers[att]
 	
 	def __str__(self):
 		"""returns a string representation of this frame"""
 		return "\n".join("{}: {}".format(i, self.__getattr__(i)) for i in Warframe.inherent_attributes)
+
+	def _check_attribute(self, att):
+		"""raises an error if this attibute is not supported"""
+		if not att in self.base_attributes:
+			raise AttributeError("Attribute must be one of {}".format(self.base_attributes))
+
 	
 	def apply_modifier(self, modifier_name, value):
 		"""
@@ -66,8 +71,7 @@ class Warframe():
 		function allows individual warframes to modify behavior if necessary.
 		directly setting the dict value may bypass this behavior.
 		"""
-		if not modifier_name in Warframe.inherent_attributes:
-			raise KeyError("modifier_name must be one of {}".format(Warframe.inherent_attributes))
+		self._check_attribute(modifier_name)
 		self.modifiers[modifier_name] = value
 
 def _test():
