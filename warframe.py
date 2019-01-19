@@ -14,32 +14,53 @@ class Warframe():
 	base_energy = 100
 	base_sprint = 1
 
-	def __init__(self, healthModifer=1, armorModifier=1, shieldModifier=1):
+	"""
+	defines the valid modifiers
+	"""
+	modifiers = ["health",
+	"armor",
+	"shield",
+	"energy",
+	"sprint_speed",
+	"strength",
+	"range",
+	"duration",
+	"efficiency",
+	"energy"]
+
+	def __init__(self, health_modifier=1, armor_modifier=1, shield_modifier=1):
 		"""
 		initializes the warframe
 		"""
 		# list containing the warframe abilities. 1-4 correlate with the
 		# in-game abilities. Passive(s) are appended at the end of the list
 		self.abilities = ()
+		self.modifiers = dict()
 
 		# warframe stats are a 1:1 mapping of the values shown in game
-		self.armor  = base_armor
-		self.shield = base_shield
-		self.health = base_health
-		self.energy = base_energy
+		self.base_armor  = Warframe.base_armor
+		self.base_shield = Warframe.base_shield
+		self.base_health = Warframe.base_health
+		self.base_energy = Warframe.base_energy
 
 		# all modifiers are stored as floats representing the non-percentage based
 		# value, i.e. 110% power is stored 1.1
-		self.sprint_speed_modifier = 1
-		self.strength_modifier = 1
-		self.efficiency_modifier = 1
-		self.duration_modifier = 1
-		self.range_modifier = 1
-
-		self.health_modifier
-		self.armor_modifier
-		self.shield_modifier
-		self.energy_modifier
+		for mod in Warframe.modifiers:
+			self.modifiers[mod] = 1
+		self.modifiers["health"] = health_modifier
+		self.modifiers["armor"] = armor_modifier
+		self.modifiers["shield"] = shield_modifier
 
 		self.arcanes = ()
+	
+	def applyModifier(self, modifier_name, value):
+		"""
+		applies the specified modifier with the value. `modifier_name` MUST be
+		listed in Warframe.modifiers. `value` is the float value of the
+		modifier (ie, 110% becomes 1.1)
+		"""
+		if not modifier_name in Warframe.modifiers:
+			raise KeyError("modifier_name must be one of {}".format(Warframe.modifiers))
+		self.modifiers[modifier_name] = value
+
 
