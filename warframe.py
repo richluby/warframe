@@ -11,18 +11,9 @@ class Warframe():
 	"""
 
 	"""
-	defines base values for all warframes. should be overriden by individual frames
+	defines the valid warframe attributes
 	"""
-	base_armor = 100
-	base_health = 100
-	base_shield = 100
-	base_energy = 100
-	base_sprint = 1
-
-	"""
-	defines the valid modifiers
-	"""
-	modifiers = ["health",
+	inherent_attributes = ["health",
 	"armor",
 	"shield",
 	"energy",
@@ -40,32 +31,40 @@ class Warframe():
 		# list containing the warframe abilities. 1-4 correlate with the
 		# in-game abilities. Passive(s) are appended at the end of the list
 		self.abilities = ()
-		self.modifiers = dict()
 
-		# warframe stats are a 1:1 mapping of the values shown in game
-		self.base_armor  = Warframe.base_armor
-		self.base_shield = Warframe.base_shield
-		self.base_health = Warframe.base_health
-		self.base_energy = Warframe.base_energy
+		# dicts contain attribute information for each warframe. these are
+		# intended as read-only values. use `apply_modifier` to add a modifier.
+		self.base_attributes = dict()
+		self.modifiers = dict()
 
 		# all modifiers are stored as floats representing the non-percentage based
 		# value, i.e. 110% power is stored 1.1
-		for mod in Warframe.modifiers:
-			self.modifiers[mod] = 1
-		self.modifiers["health"] = health_modifier
-		self.modifiers["armor"] = armor_modifier
-		self.modifiers["shield"] = shield_modifier
+		for att in Warframe.inherent_attributes:
+			self.base_attributes[att] = 1
+			self.modifiers[att] = 1
+		self.apply_modifier("health", health_modifier)
+		self.apply_modifier("armor", armor_modifier)
+		self.apply_modifier("shield", shield_modifier)
 
 		self.arcanes = ()
+
+	def __getattr__(self, att):
+		"""returns a calculated attribute from a warframe"""
+		if not att in Warframe.inherent_attributes:
+			raise AttributeError("Attribute must be one of {}".format(Warframe.inherent_attributes))
+		return self.base_attributes[att] * self.modifiers[att]
 	
 	def apply_modifier(self, modifier_name, value):
 		"""
 		applies the specified modifier with the value. `modifier_name` MUST be
 		listed in Warframe.modifiers. `value` is the float value of the
-		modifier (ie, 110% becomes 1.1)
+		modifier (ie, 110% becomes 1.1). While the modifiers are directly
+		settable, its recommended to use the apply_modifier function. the
+		function allows individual warframes to modify behavior if necessary.
+		directly setting the dict value may bypass this behavior.
 		"""
-		if not modifier_name in Warframe.modifiers:
-			raise KeyError("modifier_name must be one of {}".format(Warframe.modifiers))
+		if not modifier_name in Warframe.inherent_attributes:
+			raise KeyError("modifier_name must be one of {}".format(Warframe.inherent_attributes))
 		self.modifiers[modifier_name] = value
 
 def _test():
@@ -74,6 +73,12 @@ def _test():
 		warframe.apply_modifier("new", 1.5)
 	except KeyError as e:
 		_warframe_logger.debug("apply_modifier correctly checks for non-existant keys.")
+	try:
+		warframe.armor = 100
+	except AttributeError as e:
+		_warframe_logger.debug("Property values correctly disabled.")
+	_warframe_logger.debug("Energy request successful for attribute. {}".format(warframe.energy))
+	_warframe_logger.debug("Abilities: {}".format(warframe.abilities))
 
 def _init_logger(level):
 	global _warframe_logger
