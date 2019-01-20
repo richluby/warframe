@@ -87,7 +87,7 @@ def _test():
 		_warframe_logger.debug("apply_modifier correctly checks for non-existant attributes.")
 	try:
 		warframe.armor = 100
-		_warframe_logger.error("Properties incorrectly accessible.")
+		_warframe_logger.warn("Properties incorrectly accessible.")
 	except AttributeError as e:
 		_warframe_logger.debug("Property values correctly disabled.")
 	try:
