@@ -3,7 +3,7 @@
 import logging
 import os
 
-_warframe_logger = None
+warframe_logger = None
 
 class Warframe():
 	"""
@@ -82,39 +82,39 @@ def _test():
 	warframe = Warframe()
 	try:
 		warframe.apply_modifier("new", 1.5)
-		_warframe_logger.error("Modifiers can be applied for non-existant attributes.")
+		warframe_logger.error("Modifiers can be applied for non-existant attributes.")
 	except AttributeError as e:
-		_warframe_logger.debug("apply_modifier correctly checks for non-existant attributes.")
+		warframe_logger.debug("apply_modifier correctly checks for non-existant attributes.")
 	try:
 		warframe.armor = 100
-		_warframe_logger.warn("Properties incorrectly accessible.")
+		warframe_logger.warn("Properties incorrectly accessible.")
 	except AttributeError as e:
-		_warframe_logger.debug("Property values correctly disabled.")
+		warframe_logger.debug("Property values correctly disabled.")
 	try:
-		_warframe_logger.debug("Energy request successful for attribute- warframe.energy: {}".format(warframe.energy))
+		warframe_logger.debug("Energy request successful for attribute- warframe.energy: {}".format(warframe.energy))
 	except AttributeError as e:
-		_warframe_logger.error("Failed to access property using dot notation.")
-	_warframe_logger.debug("Abilities: {}".format(warframe.abilities))
+		warframe_logger.error("Failed to access property using dot notation.")
+	warframe_logger.debug("Abilities: {}".format(warframe.abilities))
 	for att in Warframe.inherent_attributes:
 		if warframe[att] != 1:
-			_warframe_logger.error("Unexpected modified attribute: {} \tval: {}\tExpected: {}".format(att, warframe[att], 1))
+			warframe_logger.error("Unexpected modified attribute: {} \tval: {}\tExpected: {}".format(att, warframe[att], 1))
 
-def _init_warframe_logger(level="WARN"):
-	global _warframe_logger
+def init_warframe_logger(level="WARN"):
+	global warframe_logger
 	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s:%(name)s:%(levelname)s:%(message)s")
 	handler = logging.StreamHandler()
 	handler.setFormatter(formatter)
-	_warframe_logger = logging.getLogger("libwarframe:"+__name__)
-	_warframe_logger.addHandler(handler)
-	_warframe_logger.setLevel(level)
-	_warframe_logger.debug("Logger set to {}".format(level))
+	warframe_logger = logging.getLogger("libwarframe:"+__name__)
+	warframe_logger.addHandler(handler)
+	warframe_logger.setLevel(level)
+	warframe_logger.debug("Logger set to {}".format(level))
 
 if __name__ == "__main__":
 	level = os.getenv("LOGGER_LEVEL")
 	# should be DEBUG, INFO, WARN, ERROR
 	if level == "" or level == None:
 		level = "WARN"
-	_init_warframe_logger(level)
+	init_warframe_logger(level)
 	_test()
 	logging.shutdown()
 
