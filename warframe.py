@@ -78,27 +78,6 @@ class Warframe():
 		self._check_attribute(modifier_name)
 		self.modifiers[modifier_name] = value
 
-def _test():
-	warframe = Warframe()
-	try:
-		warframe.apply_modifier("new", 1.5)
-		warframe_logger.error("Modifiers can be applied for non-existant attributes.")
-	except AttributeError as e:
-		warframe_logger.debug("apply_modifier correctly checks for non-existant attributes.")
-	try:
-		warframe.armor = 100
-		warframe_logger.warn("Properties incorrectly accessible.")
-	except AttributeError as e:
-		warframe_logger.debug("Property values correctly disabled.")
-	try:
-		warframe_logger.debug("Energy request successful for attribute- warframe.energy: {}".format(warframe.energy))
-	except AttributeError as e:
-		warframe_logger.error("Failed to access property using dot notation.")
-	warframe_logger.debug("Abilities: {}".format(warframe.abilities))
-	for att in Warframe.inherent_attributes:
-		if warframe[att] != 1:
-			warframe_logger.error("Unexpected modified attribute: {} \tval: {}\tExpected: {}".format(att, warframe[att], 1))
-
 def init_warframe_logger(level="WARN"):
 	global warframe_logger
 	formatter = logging.Formatter(datefmt="%Y-%m-%d %H:%M:%S", fmt="%(asctime)s:%(name)s:%(levelname)s:%(message)s")
